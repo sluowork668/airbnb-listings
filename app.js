@@ -38,7 +38,7 @@ function cardHTML(item) {
 
   let amenities = [];
   try {
-    amenities = JSON.parse(item.amenities);
+    amenities = Array.isArray(item.amenities) ? item.amenities : JSON.parse(item.amenities ?? "[]");
   } catch {
     amenities = [];
   }
