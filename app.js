@@ -29,26 +29,32 @@ function render(items) {
 }
 
 function cardHTML(item) {
-  const name = item.name ?? item.listing_name ?? "Untitled listing";
-  const description = item.description ?? item.summary ?? "";
-  const price = item.price ?? item.nightly_price ?? "";
-  const amenities = item.amenities ?? [];
-  const hostName = item.host_name ?? item.host?.name ?? "Host";
-  const hostPic = item.host_picture_url ?? item.host?.picture_url ?? "";
-  const thumb = item.thumbnail_url ?? item.picture_url ?? item.images?.[0] ?? "";
+  const name = item.name ?? "Untitled listing";
+  const description = item.description ?? "";
+  const price = item.price ?? "";
+  const hostName = item.host_name ?? "Host";
+  const hostPic = item.host_picture_url ?? "";
+  const thumb = item.picture_url ?? "";
 
-  const topAmenities = Array.isArray(amenities) ? amenities.slice(0, 6) : [];
+  let amenities = [];
+  try {
+    amenities = JSON.parse(item.amenities);
+  } catch {
+    amenities = [];
+  }
+
+  const topAmenities = amenities.slice(0, 6);
 
   return `
     <article class="card">
-      ${thumb ? `<img class="thumb" src="${thumb}" alt="Listing thumbnail">` : ""}
+      ${thumb ? `<img class="thumb" src="${thumb}" alt="Listing image">` : ""}
       <h3>${esc(name)}</h3>
       <p class="meta">${esc(description.slice(0, 140))}${description.length > 140 ? "…" : ""}</p>
-      <p><strong>Price:</strong> ${esc(String(price))}</p>
+      <p><strong>Price:</strong> ${esc(price)}</p>
 
       <div>
         <strong>Amenities:</strong><br/>
-        ${topAmenities.map(a => `<span class="badge">${esc(String(a))}</span>`).join("")}
+        ${topAmenities.map(a => `<span class="badge">${esc(a)}</span>`).join("")}
       </div>
 
       <div class="host">
