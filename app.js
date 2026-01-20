@@ -1,6 +1,7 @@
 const LISTINGS_URL = "./data/airbnb_sf_listings_500.json";
 const listingsEl = document.getElementById("listings");
 const searchEl = document.getElementById("search");
+const FALLBACK_IMAGE = "https://via.placeholder.com/400x300?text=No+Image";
 
 let ALL = [];
 
@@ -34,7 +35,7 @@ function cardHTML(item) {
   const price = item.price ?? "";
   const hostName = item.host_name ?? "Host";
   const hostPic = item.host_picture_url ?? "";
-  const thumb = item.picture_url ?? "";
+  const thumb = item.picture_url || FALLBACK_IMAGE;
 
   let amenities = [];
   try {
@@ -49,7 +50,10 @@ function cardHTML(item) {
     <article class="card">
       ${thumb ? `<img class="thumb" src="${thumb}" alt="Listing image">` : ""}
       <h3>${esc(name)}</h3>
-      <p class="meta">${esc(description.slice(0, 140))}${description.length > 140 ? "…" : ""}</p>
+      
+      const cleanDesc = stripHTML(description);
+      <p class="meta">${esc(cleanDesc.slice(0, 140))}${cleanDesc.length > 140 ? "…" : ""}</p>
+
       <p><strong>Price:</strong> ${esc(price)}</p>
 
       <div>
@@ -63,6 +67,12 @@ function cardHTML(item) {
       </div>
     </article>
   `;
+}
+
+function stripHTML(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
 }
 
 function esc(s) {
