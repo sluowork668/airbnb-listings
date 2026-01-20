@@ -1,4 +1,4 @@
-const LISTINGS_URL = "./data/airbnb_sf_listings_500.json"";
+const LISTINGS_URL = "./data/airbnb_sf_listings_500.json";
 const listingsEl = document.getElementById("listings");
 const searchEl = document.getElementById("search");
 
