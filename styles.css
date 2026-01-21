@@ -2,6 +2,12 @@ body { font-family: system-ui, Arial, sans-serif; margin: 0; }
 .header { padding: 16px; border-bottom: 1px solid #ddd; }
 #search { margin-top: 10px; padding: 8px; width: min(420px, 100%); }
 
+#loading {
+  padding: 16px;
+  font-style: italic;
+  color: #666;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
