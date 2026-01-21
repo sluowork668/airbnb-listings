@@ -1,5 +1,6 @@
 const LISTINGS_URL = "./data/airbnb_sf_listings_500.json";
 const listingsEl = document.getElementById("listings");
+const loadingEl = document.getElementById("loading");
 const searchEl = document.getElementById("search");
 const FALLBACK_IMAGE = "https://via.placeholder.com/400x300?text=No+Image";
 
@@ -19,9 +20,15 @@ async function loadListings() {
       [];
 
     render(ALL.slice(0, 50));
+
+    // hide loading text after successful render
+    if (loadingEl) loadingEl.style.display = "none";
   } catch (e) {
     console.error(e);
     listingsEl.innerHTML = `<p>Could not load listings. Check JSON path + console.</p>`;
+
+    // show a friendly loading error message
+    if (loadingEl) loadingEl.textContent = "Failed to load listings.";
   }
 }
 
@@ -32,6 +39,8 @@ function render(items) {
 function cardHTML(item) {
   const name = item.name ?? "Untitled listing";
   const description = item.description ?? "";
+  const cleanDesc = stripHTML(description); // moved ourside template string
+
   const price = item.price ?? "";
   const hostName = item.host_name ?? "Host";
   const hostPic = item.host_picture_url ?? "";
@@ -39,7 +48,9 @@ function cardHTML(item) {
 
   let amenities = [];
   try {
-    amenities = Array.isArray(item.amenities) ? item.amenities : JSON.parse(item.amenities ?? "[]");
+    amenities = Array.isArray(item.amenities) 
+      ? item.amenities 
+      : JSON.parse(item.amenities ?? "[]");
   } catch {
     amenities = [];
   }
@@ -48,12 +59,9 @@ function cardHTML(item) {
 
   return `
     <article class="card">
-      ${thumb ? `<img class="thumb" src="${thumb}" alt="Listing image">` : ""}
+      <img class="thumb" src="${thumb}" alt="Listing image">
       <h3>${esc(name)}</h3>
-      
-      const cleanDesc = stripHTML(description);
       <p class="meta">${esc(cleanDesc.slice(0, 140))}${cleanDesc.length > 140 ? "…" : ""}</p>
-
       <p><strong>Price:</strong> ${esc(price)}</p>
 
       <div>
@@ -71,7 +79,7 @@ function cardHTML(item) {
 
 function stripHTML(html) {
   const div = document.createElement("div");
-  div.innerHTML = html;
+  div.innerHTML = html ?? "";
   return div.textContent || div.innerText || "";
 }
 
